@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PickerUp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PickerUp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

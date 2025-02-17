@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Window
+    x:Class="PickerUp.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PickerUp"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:navigation="using:PickerUp.Components.Navigation"
+    mc:Ignorable="d"
+    Title="PickerUp">
+
+    <Grid ColumnDefinitions="*, Auto" RowDefinitions="31, Auto, *">
+        <navigation:TitleBar x:Name="_titleBar" Grid.Row="0" Grid.Column="0"></navigation:TitleBar>
+        <!-- <MenuBar x:Name="_titleBar" Grid.Row="0" Grid.Column="0"> -->
+        <!--     <MenuBarItem Title="PickerUp"> -->
+        <!--         <MenuFlyoutItem Text="Allways on top" Click="SetAllwaysOnTop" Icon="Pin" /> -->
+        <!--         <MenuFlyoutItem Text="Settings" Click="NavigateToSettingsPage" /> -->
+        <!--         <MenuFlyoutItem Text="About" /> -->
+        <!--     </MenuBarItem> -->
+        <!-- </MenuBar> -->
+        <local:MainNavigation Grid.Row="1" />
+        <Frame Name="_mainFrame" Grid.Row="2" />
+    </Grid>
+
+</Window>

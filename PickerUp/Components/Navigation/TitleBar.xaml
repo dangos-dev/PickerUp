@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl
+    x:Class="PickerUp.Components.Navigation.TitleBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PickerUp.Components.Navigation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    
+    <Grid x:Name="_root" ColumnDefinitions="20,*,32" Height="20">
+        <Image Source="/Assets/logo.ico" Grid.Column="0" Margin="5,0,0,0"></Image>
+        <TextBlock Grid.Column="1" Text="PickerUp!" Margin="5,0,0,0" ></TextBlock>
+        
+    </Grid>
+</UserControl>
