@@ -20,8 +20,10 @@
     <PublishReadyToRun>false</PublishReadyToRun>
     <IncludeNativeLibrariesInSingleFile>true</IncludeNativeLibrariesInSingleFile>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <AssemblyVersion>0.0.9</AssemblyVersion>
-    <Version>0.0.9</Version>
+    <WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>true</WindowsAppSDKBootstrapAutoInitializeOptions_OnNoMatch_ShowUI>
+
+    <AssemblyVersion>0.0.10</AssemblyVersion>
+    <Version>0.0.10</Version>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Components\Navigation\TitleBar.xaml" />
@@ -29,20 +31,28 @@
     <None Remove="Source\Settings\SettingsPage.xaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <TrimmerRootAssembly Include="System.Drawing.Common" />
+  </ItemGroup>
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <Content Update="Assets\Fonts\JetBrainsMono.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
+  <PropertyGroup>
+    <StartupObject>PickerUp.Program</StartupObject>
+  </PropertyGroup>
+
   <ItemGroup>
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
-  
+
 
   <!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
@@ -62,7 +72,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
     <PackageReference Include="PInvoke.User32" Version="0.7.124" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
     <PackageReference Include="Vanara.PInvoke.Gdi32" Version="4.0.4" />
     <PackageReference Include="Vanara.PInvoke.User32" Version="4.0.4" />
   </ItemGroup>
@@ -90,7 +100,7 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
-  
+
   <!-- Publish Properties -->
   <PropertyGroup>
     <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
@@ -114,5 +124,5 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
-  
+
 </Project>

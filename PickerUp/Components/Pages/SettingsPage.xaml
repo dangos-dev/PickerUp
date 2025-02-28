@@ -24,22 +24,28 @@
                                    Description="Keep this window always visible on top of other applications.">
                 <ToggleSwitch Name="_toggleAlwaysOnTop" Toggled="AlwaysOnTop_Toggled" />
             </controls:SettingsCard>
-            
+
             <controls:SettingsCard Header="Auto copy"
                                    Description="Automatically copy picked color to the clipboard.">
                 <ToggleSwitch Name="_toggleAutoCopy" Toggled="AutoCopy_Toggled" />
             </controls:SettingsCard>
-            
+
             <controls:SettingsCard Header="Show alpha"
                                    Description="Display the alpha value as part of the color code."
                                    IsEnabled="False">
                 <ToggleSwitch Name="_toggleShowAlpha" Toggled="ShowAlpha_Toggled" />
             </controls:SettingsCard>
-            
-            <controls:SettingsCard x:Name="settingsCard"
-                                   Click="GoToWebpage"
-                                   Header="Hecho por Dango con ❤️"
-                                   Description="Explora más de mis desarrollos 🍡"
+            <controls:SettingsCard Click="GoToWebpage"
+                                   Header="Official project page"
+                                   Description="Documentation and release notes"
+                                   ActionIcon="{winUi:FontIcon Glyph=&#xE8A7;}"
+                                   ActionIconToolTip="Open in new window"
+                                   IsClickEnabled="True">
+            </controls:SettingsCard>
+
+            <controls:SettingsCard Click="VisitDango"
+                                   Header="Made by Jabes with ❤️"
+                                   Description="Explore my portfolio 🍡"
                                    ActionIcon="{winUi:FontIcon Glyph=&#xE8A7;}"
                                    ActionIconToolTip="Open in new window"
                                    IsClickEnabled="True">

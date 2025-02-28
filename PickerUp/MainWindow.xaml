@@ -13,14 +13,7 @@
 
     <Grid ColumnDefinitions="*, Auto" RowDefinitions="31, Auto, *">
         <navigation:TitleBar x:Name="_titleBar" Grid.Row="0" Grid.Column="0"></navigation:TitleBar>
-        <!-- <MenuBar x:Name="_titleBar" Grid.Row="0" Grid.Column="0"> -->
-        <!--     <MenuBarItem Title="PickerUp"> -->
-        <!--         <MenuFlyoutItem Text="Allways on top" Click="SetAllwaysOnTop" Icon="Pin" /> -->
-        <!--         <MenuFlyoutItem Text="Settings" Click="NavigateToSettingsPage" /> -->
-        <!--         <MenuFlyoutItem Text="About" /> -->
-        <!--     </MenuBarItem> -->
-        <!-- </MenuBar> -->
-        <local:MainNavigation Grid.Row="1" />
+        <navigation:MainNavigation Grid.Row="1" />
         <Frame Name="_mainFrame" Grid.Row="2" />
     </Grid>
 

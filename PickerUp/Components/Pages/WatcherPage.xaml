@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:userControls="using:PickerUp.Components.UserControls"
     Unloaded="WatcherPage_OnUnloaded"
     KeyDown="WatcherPage_OnKeyDown"
     mc:Ignorable="d"
@@ -17,7 +18,7 @@
         <Grid
             Name="_panelColor"
             RowDefinitions="*,Auto, *, Auto, Auto"
-            ColumnDefinitions="6*,*"
+            ColumnDefinitions="6*,Auto,*"
             Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="4"
             Height="130" VerticalAlignment="Top"
             Background="White">
@@ -26,7 +27,7 @@
                 Name="_buttonPauseWatcher"
                 Click="_buttonPauseWatcher_OnClick"
                 BorderBrush="Transparent" Background="Transparent"
-                Grid.Column="1" Grid.Row="0"
+                Grid.Column="2" Grid.Row="0"
                 HorizontalAlignment="Right" Margin="2"
                 Width="32" Height="25" Padding="0">
 
@@ -44,9 +45,14 @@
                 Width="80"
                 Margin="5,0"
                 VerticalAlignment="Center" VerticalContentAlignment="Center" />
+
+
             <TextBlock Name="_labelMousePos" FontSize="12" Grid.Row="3" Margin="8,0,0,0"></TextBlock>
-            <TextBlock Name="_labelColorCode" Grid.ColumnSpan="2" FontFamily="{StaticResource JetBrains}"
-                       FontSize="24" Grid.Row="4" Margin="8,0,0,5" />
+            <TextBlock Name="_labelColorCode" Grid.ColumnSpan="3" FontFamily="{StaticResource JetBrains}"
+                       FontSize="24" Grid.Row="4" Margin="8,0,0,5"
+                       TextTrimming="CharacterEllipsis"
+                       TextWrapping="Wrap"
+                       MaxLines="1" />
 
         </Grid>
         <Border Grid.Row="1" Grid.ColumnSpan="4"
@@ -79,146 +85,35 @@
                 FontFamily="Segoe MDL2 Assets"
                 Glyph="&#xE8C8;" FontSize="14" />
         </Button>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0"
-                    Grid.Row="3" Grid.ColumnSpan="4">
-            <TextBlock Text="Press" VerticalAlignment="Center" Margin="0,0,5,0" />
-            <Border Background="#E0E0E0" BorderBrush="Gray" BorderThickness="1" CornerRadius="2" Padding="3,1"
-                    Margin="2,0">
-                <TextBlock Text="ALT" VerticalAlignment="Center" FontSize="11" Foreground="Black" />
-            </Border>
-            <TextBlock Text="+" VerticalAlignment="Center" Margin="3,0" />
-            <Border Background="#E0E0E0" BorderBrush="Gray" BorderThickness="1" CornerRadius="2" Padding="3,1"
-                    Margin="2,0">
-                <TextBlock Text="D" VerticalAlignment="Center" FontSize="11" Foreground="Black" />
-            </Border>
-            <TextBlock Text="to pick a color" VerticalAlignment="Center" Margin="5,0,0,0" />
-        </StackPanel>
-        <!-- <ComboBox -->
-        <!--     Name="_listColorFormats" -->
-        <!--     Grid.Column="2" Grid.Row="2" Grid.ColumnSpan="2" -->
-        <!--     HorizontalAlignment="Stretch" -->
-        <!--     VerticalAlignment="Center" VerticalContentAlignment="Center" -->
-        <!--     Margin="2.5,5,5,5" -->
-        <!--      /> -->
 
-        <!--
-        <Button HorizontalContentAlignment="Stretch" Height="32"  
-                Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"
-                Margin="5,0,2.5,5"
-                Click="CopyToClipboardButton_OnClick">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <FontIcon Glyph="&#xE710;" FontSize="12" Margin="0,0,8,0" />
-                <TextBlock Text="Copy to clipboard" FontSize="12" FontWeight="SemiBold" />
-            </StackPanel>
-        </Button>
-        -->
-        <Grid Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4"
-              ColumnDefinitions="*,*,*,*,*,*,*,*,*,*"
-              CornerRadius="5,5,5,5"
-              Margin="5,0,5,5"
-              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              Height="Auto">
+        <Grid ColumnDefinitions="Auto" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="4">
+            <Button HorizontalContentAlignment="Stretch" Height="32"
+                    Name="_buttonPickColor"
+                    Grid.Column="0" Grid.Row="0"
+                    CornerRadius="6"
+                    Margin="5,0,2.5,5">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <FontIcon Glyph="&#xEF3C;" FontSize="12" Margin="0,0,8,0" />
+                    <TextBlock Text="Pick color" FontSize="12" FontWeight="SemiBold" />
+                </StackPanel>
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <TextBlock Text="Press ALT + D to pick a color" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
 
-            <Border x:Name="_colorPalette1" Grid.Column="0" Background="White" />
-            <Border x:Name="_colorPalette2" Grid.Column="1" Background="White" />
-            <Border x:Name="_colorPalette3" Grid.Column="2" Background="White" />
-            <Border x:Name="_colorPalette4" Grid.Column="3" Background="White" />
-            <Border x:Name="_colorPalette5" Grid.Column="4" Background="White" />
-            <Border x:Name="_colorPalette6" Grid.Column="5" Background="White" />
-            <Border x:Name="_colorPalette7" Grid.Column="6" Background="White" />
-            <Border x:Name="_colorPalette8" Grid.Column="7" Background="White" />
-            <Border x:Name="_colorPalette9" Grid.Column="8" Background="White" />
-            <Border x:Name="_colorPalette10" Grid.Column="9" Background="White" />
         </Grid>
 
-        <Grid Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="4"
-              ColumnDefinitions="*,*,*,*,*,*"
-              CornerRadius="5,5,5,5" Margin="5,0,5,5"
-              HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-              Height="Auto">
+        <userControls:ColorPaletteControl x:Name="_colorPalette"
+                                          Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4"
+                                          Margin="5,0,5,5" />
 
-            <Border x:Name="_colorHistory1" Grid.Column="0" Background="White" ToolTipService.ToolTip="Color History 1" />
-            <Border x:Name="_colorHistory2" Grid.Column="1" Background="White" />
-            <Border x:Name="_colorHistory3" Grid.Column="2" Background="White" />
-            <Border x:Name="_colorHistory4" Grid.Column="3" Background="White" />
-            <Border x:Name="_colorHistory5" Grid.Column="4" Background="White" />
-            <Border x:Name="_colorHistory6" Grid.Column="5" Background="White" />
-        </Grid>
+        <userControls:ColorPaletteControl x:Name="_historyPalette"
+                                          Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="4"
+                                          Margin="5,0,5,5" />
 
-        <!-- 
-        <StackPanel Grid.Row="3" Grid.ColumnSpan="4">
-        <com:ColorPickerSlider Name="ColorPickerSlider" Grid.Row="20" ColorRepresentation="Hsva" ColorChannel="Channel1" />
-        <com:ColorPickerSlider Margin="5,0,2.5,5" Name="ColorPickerSlider4" Grid.Row="4" ColorRepresentation="Hsva" ColorChannel="Channel2" />
-        <com:ColorPickerSlider Name="ColorPickerSlider5" Grid.Row="4" ColorRepresentation="Hsva" ColorChannel="Channel3" />
-        <com:ColorPickerSlider Name="ColorPickerSlider2" Grid.Row="3" ColorRepresentation="Hsva" ColorChannel="Alpha" />
-
-        <com:ColorPreviewer Name="colorPreviewer" Height="32" ></com:ColorPreviewer>
-
-        </StackPanel>
-        -->
-        <!-- <com:ColorPicker Grid.Row="3" Grid.ColumnSpan="4" ></ColorPicker> -->
-        <!--
-        <Slider Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Margin="5,5,2.5,5"></Slider>
-        <TextBox TextWrapping="Wrap" MinWidth="0" HorizontalAlignment="Stretch" BorderThickness="0,0,0,0" Text="0"
-                 Margin="2.5,5,5,5" Grid.Row="2"
-                 Grid.Column="2"
-                 VerticalContentAlignment="Center" Background="Transparent">
-        </TextBox>
-
-        <Slider Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Margin="5,5,2.5,5"></Slider>
-        <TextBox TextWrapping="Wrap" MinWidth="0" HorizontalAlignment="Stretch" BorderThickness="0,0,0,0" Text="0"
-                 Margin="2.5,5,5,5" Grid.Row="3" Grid.Column="2"
-                 VerticalContentAlignment="Center" Background="Transparent">
-        </TextBox>
-
-        <Slider Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="5,5,2.5,5"></Slider>
-        <TextBox TextWrapping="Wrap" MinWidth="0"
-                 Text="0" Margin="2.5,5,5,5" Grid.Row="4" Grid.Column="2" VerticalContentAlignment="Center"
-                 BorderThickness="0,0,0,0" Background="Transparent">
-        </TextBox>
-        -->
-        <!--
-        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Grid.RowSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Rectangle Width="50" Height="50" Fill="Red" Grid.Row="6" Grid.RowSpan="2" RadiusX="4" RadiusY="4" Margin="0,0,10,0" >
-                <Rectangle.Style>
-        <Style TargetType="{x:Type Rectangle}">
-            <Setter Property="Stroke" Value="Black" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Stroke" Value="Red" />
-                    <Setter Property="StrokeThickness" Value="3" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-    </Rectangle.Style>
-            </Rectangle>
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Right" >
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4"  />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,0,2.5,2.5" RadiusX="4" RadiusY="4" />
-
-
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Bottom" >
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-                    <Rectangle Width="20" Height="20" Fill="Red" Margin="2.5,2.5,2.5,0" RadiusX="4" RadiusY="4" />
-
-
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
-
-        -->
     </Grid>
 </Page>

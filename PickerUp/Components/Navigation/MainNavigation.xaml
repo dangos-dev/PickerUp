@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <UserControl
-    x:Class="PickerUp.MainNavigation"
+    x:Class="PickerUp.Components.Navigation.MainNavigation"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -36,12 +36,13 @@
 
     <Grid ColumnDefinitions="*" Margin="0,5,0,2.5">
 
-        <controls:Segmented x:Name="segmentedControl"
+        <controls:Segmented x:Name="_segmentedControl"
                             CornerRadius="0"
                             HorizontalAlignment="Stretch"
                             SelectedIndex="0" BorderThickness="0" BorderBrush="Transparent"
                             SelectionChanged="SegmentedControl_OnSelectionChanged">
             <controls:SegmentedItem Icon="{winUi:FontIcon Glyph=&#xEF3C;}" Tag="watcher" Margin="5,0,0,0" />
+            <controls:SegmentedItem Icon="{winUi:FontIcon Glyph=&#xE790;}" Tag="palettes" />
             <controls:SegmentedItem Icon="{winUi:FontIcon Glyph=&#xE713;}" Tag="settings" Margin="0,0,5,0" />
 
         </controls:Segmented>

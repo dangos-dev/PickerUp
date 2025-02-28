@@ -10,12 +10,8 @@ using System.Runtime.InteropServices;
 using Vanara.PInvoke;
 using Windows.Graphics;
 using WinRT;
-using PickerUp;
-using PickerUp.Components.Navigation;
 using PickerUp.Source;
 using System.IO;
-using System.Threading.Tasks;
-using Windows.Storage;
 using KeyModifiers=Vanara.PInvoke.User32.HotKeyModifiers;
 using Keys=Vanara.PInvoke.User32.VK;
 using WatcherPage=PickerUp.Components.Pages.WatcherPage;
@@ -32,7 +28,7 @@ public sealed partial class MainWindow : Window {
     private static HWND Handle { get; set; }
     public static AppWindow _appWindow { get; set; }
     public static Frame MainFrame { get; set; }
-    
+
     public readonly static string AppLocalFolder = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
         "Dango",
@@ -47,13 +43,14 @@ public sealed partial class MainWindow : Window {
 
         EnsureAppLocalFolderExistsAsync();
         Settings.LoadSettingsFromFileAsync();
-        
+        SessionManager.LoadSessionFromFileAsync();
+
         InitializeWindow();
         RegisterEvents();
 
         // ApplicationData.Current
         InitializeHotKeys();
-        
+
         MainFrame = _mainFrame;
         _mainFrame.Navigate(typeof(WatcherPage));
     }
@@ -74,8 +71,8 @@ public sealed partial class MainWindow : Window {
         User32.SendMessage(Handle, 0x0080, 1, ico.Handle);
         User32.SendMessage(Handle, 0x0080, 2, ico.Handle);
         SetTitleBar(_titleBar);
-        
-         _ = TrySetAcrylicBackdrop();
+
+        _ = TrySetAcrylicBackdrop();
 
         _appWindow.Resize(new SizeInt32(_Width: 300, _Height: 420));
     }
@@ -149,8 +146,9 @@ public sealed partial class MainWindow : Window {
     public static void SetAlwaysOnTop(bool state = true) {
         ((OverlappedPresenter) _appWindow.Presenter).IsAlwaysOnTop = state;
     }
+
     private bool TrySetAcrylicBackdrop() {
-        if (DesktopAcrylicController.IsSupported() is false) return false;// Acrylic is not supported on this system
+        if (DesktopAcrylicController.IsSupported() is false) return false; // Acrylic is not supported on this system
 
         _windowsSystemDispatcher = new WindowsSystemDispatcherQueueHelper();
         // _windowsSystemDispatcher.EnsureWindowsSystemDispatcherQueueController();
@@ -166,19 +164,21 @@ public sealed partial class MainWindow : Window {
         _acrylicController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
         _acrylicController.SetSystemBackdropConfiguration(_backdropConfiguration);
 
-        return true;// succeeded
+        return true; // succeeded
 
     }
 
     private void OnActivated(object sender, WindowActivatedEventArgs args) {
         if (_backdropConfiguration is null) return;
+
         _backdropConfiguration.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
-        
+
         SetAlwaysOnTop(Settings.AlwaysOnTop);
     }
 
     private void OnThemeChanged(FrameworkElement sender, object args) {
         if (_backdropConfiguration is null) return;
+
         SetConfigurationSourceTheme();
     }
 
@@ -205,16 +205,15 @@ public sealed partial class MainWindow : Window {
             return toOriginalCaller;
         }
 
-        var keyModifiers = (KeyModifiers) ((int) lParam & 0xFFFF);// Tecla modificadora (ALT, CTRL, etc.)
-        var keyPressed = (Keys) ((int) lParam >> 16 & 0xFFFF);// Tecla presionada
+        var keyModifiers = (KeyModifiers) ((int) lParam & 0xFFFF); // Tecla modificadora (ALT, CTRL, etc.)
+        var keyPressed = (Keys) ((int) lParam >> 16 & 0xFFFF); // Tecla presionada
 
         switch (keyModifiers){
-            case KeyModifiers.MOD_ALT when keyPressed == Keys.VK_D:// ALT + D
+            case KeyModifiers.MOD_ALT when keyPressed == Keys.VK_D: // ALT + D
                 WatcherPage.PickColor();
-
                 return IntPtr.Zero;
 
-            default:// Si no es ningun atajo registrado lo devuelve al caller
+            default: // Si no es ningun atajo registrado lo devuelve al caller
                 return toOriginalCaller;
         }
     }

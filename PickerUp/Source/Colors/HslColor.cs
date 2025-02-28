@@ -68,12 +68,12 @@ public class HslColor : IColorFormat {
     }
 
     public HslColor(byte r, byte g, byte b, byte a = 255) {
-        
+
         _r = r;
         _g = g;
         _b = b;
         _a = a;
-        
+
         ComputeHslChannel();
     }
 
@@ -91,12 +91,12 @@ public class HslColor : IColorFormat {
     private void ComputeHslChannel() {
         // Obtiene los valores HSL desde System.Drawing
         Color sysColor = Color.FromArgb(_a, _r, _g, _b);
-        
+
         _h = sysColor.GetHue();
         _s = sysColor.GetSaturation();
         _l = sysColor.GetBrightness();
     }
-    
+
     private void ComputeRgbChannel() {
         byte r;
         byte g;
@@ -134,5 +134,5 @@ public class HslColor : IColorFormat {
 
     public HslColor(IColorFormat color) : this(color.R, color.G, color.B, color.A) {}
     public string ToDescriptor() => $"HSL({H:0.##}, {S:P2}, {L:P2})";
-    public override string ToString() => $"{H:0.##}, {S:P2}, {L:P2}";
+    public override string ToString() => $"{H:0.#}, {S:P0}, {L:P0}";
 }

@@ -32,6 +32,10 @@ public sealed partial class SettingsPage {
         Settings.ShowAlpha = ((ToggleSwitch) sender).IsOn;
     }
     private async void GoToWebpage(object sender, RoutedEventArgs e) {
-        await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dangos.dev"));
+        await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dangos.dev/pickerup.html"));
+    }
+
+    private async void VisitDango(object sender, RoutedEventArgs e) {
+        await Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/dangos-dev"));
     }
 }

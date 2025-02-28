@@ -3,21 +3,20 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using PickerUp.Source;
 using PickerUp.Source.Colors;
-using PickerUp.Source.EditorDefinition;
-using PickerUp.Source.HistoryDefinition;
-using PickerUp.Source.PalettesDefinition;
+using PickerUp.Source.Palettes;
 using PickerUp.Source.Watcher;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using BitmapImage=Microsoft.UI.Xaml.Media.Imaging.BitmapImage;
 using Point=System.Drawing.Point;
 
 namespace PickerUp.Components.Pages;
@@ -41,6 +40,9 @@ public sealed partial class WatcherPage {
         InitializeComponent();
         InitializeListColorFormats();
 
+        // _historyPalette.Columns = History.Colors.Length;
+        // _colorPalette.Columns = SaturationPalette.Colors.Length;
+
     }
 
     private void RunMainProcess() {
@@ -54,25 +56,32 @@ public sealed partial class WatcherPage {
                             break;
                         }
 
-                        Source.Watcher.Watcher.WatchPixel();
+                        Watcher.WatchPixel();
 
                         // Si esta pausado, se sobreescribe el color actual por el pickeado
-                        if (_isPaused) Source.Watcher.Watcher.SetColor(Editor.GetFocused());
+                        if (_isPaused) Watcher.SetColor(ColorPicked.Get());
 
                         (IColor color, Point position, string colorString, string colorFormat) = GetWatchedData();
-                        (IColor focusedColor, string focusedColorString) = GetFocusedData();
+                        (IColor focusedColor, string focusedColorString) = GetColorPickedData();
 
                         if (DispatcherQueue.HasThreadAccess){
                             UpdateUi(color, position, colorString, colorFormat, focusedColor, focusedColorString);
+                            Watcher.IsColorChanged = false;
+                            ColorPicked.HasChanged = false;
                         }
                         else{
                             DispatcherQueue?.EnqueueAsync(
                                 () => {
                                     UpdateUi(color, position, colorString, colorFormat, focusedColor, focusedColorString);
+
+                                    Watcher.IsColorChanged = false;
+                                    ColorPicked.HasChanged = false;
                                 },
                                 Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal
                             );
                         }
+
+
                     }
                     catch (Exception e){
                         Debug.WriteLine(e);
@@ -101,11 +110,11 @@ public sealed partial class WatcherPage {
         return (watchedColor, watchedPixel, watchedColorString, watchedColorFormat);
     }
 
-    private static (IColor focusedColor, string focusedColorString) GetFocusedData() {
-        IColor focusedColor = Editor.GetFocused();
-        string focusedColorString = focusedColor.ToString();
+    private static (IColor colorPicked, string colorPickedString) GetColorPickedData() {
+        IColor _colorPicked = ColorPicked.Get();
+        string _colorPickedString = _colorPicked.ToString();
 
-        return (focusedColor, focusedColorString);
+        return (_colorPicked, _colorPickedString);
     }
 
     private void UpdateUi(IColor watchedColor, Point watchedPixel, string watchedColorString, string watchedColorFormat, IColor focusedColor, string focusedColorString) {
@@ -115,15 +124,7 @@ public sealed partial class WatcherPage {
             UpdateColor(watchedColor, watchedColorString, watchedColorFormat);
             UpdateHistory();
             UpdatePalette();
-
-            BitmapImage bitmapImage = new();
-
-            using MemoryStream stream = new();
-            Source.Watcher.Watcher.Preview.Save(stream, ImageFormat.Png);
-            Source.Watcher.Watcher.Preview.Dispose();
-            stream.Position = 0;
-            bitmapImage.SetSource(stream.AsRandomAccessStream());
-            _previewCanvas.ImageSource = bitmapImage;
+            SetPreviewCanvasImage();
 
             _labelMousePos.Text = $"({watchedPixel.X}, {watchedPixel.Y})";
 
@@ -135,7 +136,7 @@ public sealed partial class WatcherPage {
     }
 
     private void UpdateColor(IColor watchedColor, string watchedColorString, string watchedColorFormat) {
-        if (!Source.Watcher.Watcher.IsColorChanged && !_isFirstLoad)
+        if (!Watcher.IsColorChanged && !_isFirstLoad)
             return;
 
         _colorBrush.Color = watchedColor.ToWinColor();
@@ -157,7 +158,7 @@ public sealed partial class WatcherPage {
     }
 
     private void UpdateFocused(IColor focusedColor, string focusedColorString) {
-        if (!Editor.IsColorChanged && !_isFirstLoad)
+        if (!ColorPicked.HasChanged && !_isFirstLoad)
             return;
 
         _pickedColorBrush.Color = focusedColor.ToWinColor();
@@ -178,35 +179,38 @@ public sealed partial class WatcherPage {
     }
 
     private void UpdateHistory() {
-        if (!Editor.IsColorChanged && !_isFirstLoad)
+        if (!ColorPicked.HasChanged && !_isFirstLoad)
             return;
 
-        var colorHistories = new[] {
-            _colorHistory1, _colorHistory2, _colorHistory3,
-            _colorHistory4, _colorHistory5, _colorHistory6
-        };
+        IColor[] recentColors = History.Colors.Take(10).ToArray();
 
-        for (int i = 0; i < History.Colors.Length; i++){
-            colorHistories[i].Background = History.Colors[i].ToBrush();
-            ToolTipService.SetToolTip(colorHistories[i], History.Colors[i].ToString());
-        }
+        // History.Colors.CopyTo(_colorPalette.Colors, 0);
+        _historyPalette.Columns = recentColors.Length;
+
+        _historyPalette.Colors = [];
+        _historyPalette.Colors = recentColors;
     }
 
     private void UpdatePalette() {
-        if (!Editor.IsColorChanged && !_isFirstLoad)
+        if (!ColorPicked.HasChanged && !_isFirstLoad)
             return;
 
-        var colorPalettes = new[] {
-            _colorPalette1, _colorPalette2, _colorPalette3, _colorPalette4, _colorPalette5,
-            _colorPalette6, _colorPalette7, _colorPalette8, _colorPalette9, _colorPalette10
-        };
-
-        for (int i = 0; i < SaturationPalette.Colors.Length; i++){
-            colorPalettes[i].Background = SaturationPalette.Colors[i].ToBrush();
-            ToolTipService.SetToolTip(colorPalettes[i], SaturationPalette.Colors[i].ToString());
-        }
+        _colorPalette.Columns = 10;
+        _colorPalette.Colors = [];
+        _colorPalette.Colors = ShadesPalette.FromColor(ColorPicked.Get(), 10);
     }
 
+    private void SetPreviewCanvasImage() {
+        BitmapImage bitmapImage = new();
+
+        using MemoryStream stream = new();
+        Watcher.Preview.Save(stream, ImageFormat.Png);
+        Watcher.Preview.Dispose();
+        stream.Position = 0;
+
+        bitmapImage.SetSource(stream.AsRandomAccessStream());
+        _previewCanvas.ImageSource = bitmapImage;
+    }
 
     private void InitializeListColorFormats() {
         var formatOptions = new List<KeyValuePair<string, string>>() {
@@ -214,7 +218,7 @@ public sealed partial class WatcherPage {
             new("hex", "HEX"),
             // new("argb", "ARGB"),
             // new("hsv", "HSV"),
-            // new("hsl", "HSL")
+            new("hsl", "HSL")
         };
 
         _listColorFormats.SelectionChanged += ListColorFormats_SelectionChanged;
@@ -241,26 +245,34 @@ public sealed partial class WatcherPage {
 
     public static void PickColor(IColor? desiredColor = null) {
         if (desiredColor != null){
-            Editor.FocusColor(desiredColor);
-            Source.Watcher.Watcher.SetColor(Editor.GetFocused());
+            ColorPicked.Pick(desiredColor);
+            Watcher.SetColor(ColorPicked.GetAndCheck());
         }
 
-        (IColor watchedColor, _) = Source.Watcher.Watcher.WatchPixel();
-        Editor.FocusColor(watchedColor);
+        (IColor watchedColor, _) = Watcher.WatchPixel();
+        ColorPicked.Pick(watchedColor);
 
         Watcher.IsColorChanged = true;
-        Editor.IsColorChanged = true;
+        ColorPicked.HasChanged = true;
 
         if (Settings.AutoCopy){
             CopyColorToClipboard(watchedColor);
         }
+
+        SessionManager.SaveSession();
     }
 
     private static void CopyColorToClipboard(IColor colorToCopy) {
-        var dataPackage = new DataPackage();
-        dataPackage.SetText(colorToCopy.ToString());
-        Clipboard.SetContent(dataPackage);
-        Clipboard.Flush();
+        try{
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(colorToCopy.ToString());
+            Clipboard.SetContent(dataPackage);
+            Clipboard.Flush();
+        }
+        catch (Exception e){
+            Debug.WriteLine(e);
+        }
+
     }
 
 
@@ -282,27 +294,19 @@ public sealed partial class WatcherPage {
         // SetFocusedColor();
 
     }
+
     private void WatcherPage_OnLoaded(object sender, RoutedEventArgs e) {
-        // _mainTaskCancelation.TryReset();
         RunMainProcess();
-        // DispatcherQueue.TryEnqueue(() => {
-        //     var contentPresenter = VisualTreeHelper.GetParent(this.Content);
-        //     var layoutRoot = VisualTreeHelper.GetParent(contentPresenter);
-        //     var titleBar = VisualTreeHelper.GetChild(layoutRoot, 1) as Grid;
-        //     var buttonContainer = VisualTreeHelper.GetChild(titleBar, 0) as Grid;
-        //     var closeButton = VisualTreeHelper.GetChild(buttonContainer, 2) as Button;
-        //     if (closeButton != null){
-        //         closeButton.Visibility = Visibility.Collapsed;//Hides the button.
-        //     }
-        //     // VisualTreeHelper.GetChild(VisualTreeHelper.GetParent(VisualTreeHelper.GetParent(layoutRoot)), 1)
-        // });
     }
+
     private void WatcherPage_OnUnloaded(object sender, RoutedEventArgs e) {
         StopMainTask();
         _listColorFormats.SelectionChanged -= ListColorFormats_SelectionChanged;
         // DisposeMainTask();
     }
+
     private void CopyToClipboardButton_OnClick(object sender, RoutedEventArgs e) {
-        CopyColorToClipboard(Editor.GetFocused());
+        // ToggleThemeTeachingTip1.IsOpen = true;
+        CopyColorToClipboard(ColorPicked.Get());
     }
 }
